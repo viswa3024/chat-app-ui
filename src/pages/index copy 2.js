@@ -104,7 +104,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-       <ChatContainer>
+      <ChatContainer>
       <ChatHistory>
         {messages.map((msg, index) => (
           <Message key={index} isUser={msg.isUser}>

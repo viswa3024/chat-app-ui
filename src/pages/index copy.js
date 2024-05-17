@@ -1,17 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 
 const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 800px;
+  max-width: 600px;
   margin: 50px auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  height: 80vh;
 `;
 
 const ChatHistory = styled.div`
@@ -19,6 +18,7 @@ const ChatHistory = styled.div`
   padding: 10px;
   border-bottom: 1px solid #ddd;
   overflow-y: auto;
+  max-height: 400px;
 `;
 
 const Message = styled.div`
@@ -27,22 +27,18 @@ const Message = styled.div`
   background: ${(props) => (props.isUser ? '#daf8e3' : '#f1f0f0')};
   align-self: ${(props) => (props.isUser ? 'flex-end' : 'flex-start')};
   border-radius: 5px;
-  max-width: 75%;
 `;
 
 const InputContainer = styled.div`
   display: flex;
-  padding: 10px;
+  margin-top: 10px;
 `;
 
-const TextInput = styled.textarea`
+const TextInput = styled.input`
   flex-grow: 1;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  resize: none;
-  max-height: 200px;
-  overflow-y: auto;
 `;
 
 const SendButton = styled.button`
@@ -63,14 +59,6 @@ export default function Home() {
 
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const textInputRef = useRef(null);
-
-  useEffect(() => {
-    if (textInputRef.current) {
-      textInputRef.current.style.height = 'auto';
-      textInputRef.current.style.height = textInputRef.current.scrollHeight + 'px';
-    }
-  }, [inputValue]);
 
   const handleSendMessage = () => {
     if (inputValue.trim()) {
@@ -88,22 +76,16 @@ export default function Home() {
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
 
   return (
-    <>
+    <div>
       <Head>
         <title>Chatbot Application</title>
         <meta name="description" content="Chatbot application using Falcon-7B model" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <main>
        <ChatContainer>
       <ChatHistory>
         {messages.map((msg, index) => (
@@ -114,15 +96,14 @@ export default function Home() {
       </ChatHistory>
       <InputContainer>
         <TextInput
-          ref={textInputRef}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          rows="1"
+          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
         />
         <SendButton onClick={handleSendMessage}>Send</SendButton>
       </InputContainer>
     </ChatContainer>
-    </>
+      </main>
+    </div>
   );
 }
